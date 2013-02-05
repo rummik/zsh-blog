@@ -1,0 +1,16 @@
+<div class="post" id=p$post[id]>
+	<span class="date">$(date -d "$post[date]" +"%A, %B %d, %Y")</span>
+	<h2 class="title"><a href="$post[permalink]">$post[title]</a></h2>
+
+	<div class="content">
+		${${content[post]:+$post[body]}:-$post[preview]}
+		$([[ $post[body] != $post[preview] && $content[post] -eq 0 ]] && print '<span class="read-more">(<a href="'$post[permalink]'">Read more</a>)</span>')
+	</div>
+
+	<hr>
+
+	${post[tags]:+<div class="tags">Tags: $post[tags]</div>}
+	<span class="posted-by">Posted by $post[author] @ <a href="$post[permalink]">$(date -d "$post[date]" +"%l:%M %p")</a></span>
+
+	${${blog[disqus]#0}:+<span class="comments"><a href="$post[permalink]#disqus_thread">Comments</a></span>}
+</div>

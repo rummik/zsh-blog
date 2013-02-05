@@ -1,0 +1,8 @@
+<div class="breadcrumb">
+	${page[previous]:+<a href=\"$page[previous]\" class=\"previous\">&lt; Previous ${${post:+Post}:-Page}</a>}
+	${page[next]:+<a href=\"$page[next]\" class=\"next\">Next ${${post:+Post}:-Page} &gt;</a>}
+</div>
+
+<div id="posts">
+	$fragment[posts]
+</div>

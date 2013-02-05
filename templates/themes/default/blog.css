@@ -1,0 +1,147 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5em;
+}
+img {
+  border: 0;
+}
+a {
+  text-decoration: inherit;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  margin: 0;
+}
+ul,
+li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#wrapper {
+  margin: 20px auto;
+  padding: 0 20px;
+  max-width: 800px;
+  min-width: 400px;
+}
+#wrapper header {
+  text-align: center;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+#wrapper header h1 {
+  font-size: 2.5em;
+  line-height: 1em;
+}
+#wrapper #middle {
+  float: right;
+  width: 100%;
+}
+#wrapper #middle #side {
+  float: left;
+  width: 200px;
+  margin-right: 10px;
+}
+#wrapper #middle .breadcrumb {
+  overflow: hidden;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+#wrapper #middle .breadcrumb div {
+  float: right;
+}
+#wrapper #middle #posts {
+  overflow: hidden;
+}
+#wrapper #middle #posts .post {
+  padding: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+#wrapper #middle #posts .post .date {
+  float: right;
+}
+#wrapper #middle #posts .post .title {
+  float: left;
+}
+#wrapper #middle #posts .post .content {
+  clear: both;
+}
+#wrapper #middle #posts .post .read-more {
+  font-size: 0.6em;
+}
+#wrapper #middle #posts .post hr {
+  border: 0;
+  border-top: 1px solid #bbb;
+  margin: 0.3em 0 0;
+}
+#wrapper #middle #posts .post .tags {
+  float: left;
+}
+#wrapper #middle #posts .post .posted-by {
+  float: right;
+}
+#wrapper #bottom {
+  width: 100%;
+  float: right;
+  margin-bottom: 10px;
+}
+#wrapper footer {
+  padding: 5px;
+  display: block;
+  clear: both;
+}
+.box .inner {
+  padding: 5px;
+}
+#side .box {
+  margin-bottom: 10px;
+}
+#bottom .box {
+  float: right;
+  width: 130px;
+}
+#bottom .box.stats {
+  width: 230px;
+  float: left;
+}
+.box.tags li {
+  float: left;
+  margin-right: 10px;
+}
+.box.tags li a {
+  line-height: 1.2em;
+}
+#bottom .box.tags {
+  width: 100%;
+  margin-left: -230px;
+  margin-right: -130px;
+}
+#bottom .box.tags .inner {
+  overflow: hidden;
+  margin-left: 240px;
+  margin-right: 140px;
+}
+#bottom .box.archives {
+  position: relative;
+}
+body {
+  font-family: Ubuntu, sans-serif;
+  color: #333;
+  background: url(/background.png) #fafafa;
+}
+a {
+  color: #a00;
+}
+a:hover,
+a:active {
+  color: #c77;
+}
+@import url("http://fonts.googleapis.com/css?family=Ubuntu");

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang=en>
+	<head>
+		<meta charset=utf-8>
+
+		<title>$blog[title]${post[title]:+ &gt; $post[title]}</title>
+
+		<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+		<link rel=stylesheet href="/blog.css">
+		<script src="/blog.js"></script>
+	</head>
+	<body>
+		<div id=wrapper>
+			<header>
+				<h1>${${content[home]:+$blog[title]}:-<a href="$blog[root]">$blog[title]</a>}</h1>
+				${blog[tagline]:+<span class="tagline">$blog[tagline]</span>}
+				<span class="feeds">${feed[rss]:+<a href="$feed[rss]">RSS</a>} ${feed[atom]:+<a href="$feed[atom]">Atom</a>}</span>
+			</header>
+
+			<div id=middle>
+				<div id=side>
+					<div class="box">
+						<div class="inner">
+							<h5>Links</h5>
+
+							<ul>
+								<li><a href="http://www.chameleoid.com/">Chameleoid</a></li>
+								<li><a href="http://github.com/rummik">Github</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="inner">
+							<h5>Recent Posts</h5>
+
+							$fragment[recent-posts]
+						</div>
+					</div>
+				</div>
+
+				$page[content]
+			</div>
+
+			<div id=bottom>
+				<div class="box archives">
+					<div class="inner">
+						<h5>Archives</h5>
+
+						$fragment[archives]
+					</div>
+				</div>
+
+				<div class="box tags">
+					<div class="inner">
+						<h5>Tags</h5>
+
+						$fragment[tags]
+					</div>
+				</div>
+
+				<div class="box stats">
+					<div class="inner">
+						<h5>Stats</h5>
+
+						<ul>
+							<li>Post count: $count[posts]</li>
+							<li>Tag count: $count[tags]</li>
+							<!--<li>Latest post: $(date -d "" +"%m/%d/%Y %H:%M")</li>-->
+							<li>Updated: $(date +"%m/%d/%Y %H:%M")</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<footer>
+				Powered by <a href="http://github.com/rummik/zsh-blog">ZSH-Blog</a> $zblog[version].
+
+				${${blog[disqus]#0}:+<span class="comments-by">Comments by <a href="http://disqus.com/">Disqus</a>.</span>}
+			</footer>
+		</div>
+	</body>
+</html>

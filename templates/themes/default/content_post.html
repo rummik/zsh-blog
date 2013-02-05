@@ -1,0 +1,18 @@
+<div class="breadcrumb">
+	${${content[home]:-<a href="/">Home</a>}/#%1/}
+	${page[year]:+&gt; <a href="/archives/$page[year]/">$page[year]</a>}
+	${page[month]:+&gt; <a href="/archives/$page[year]/$page[month]/">$page[month]</a>}
+	${page[day]:+&gt; <a href="/archives/$page[year]/$page[month]/$page[day]/">$page[day]</a>}
+	${post[title]:+&gt; <a href="$post[permalink]">$post[title]</a>}
+
+	<div>
+		${page[previous]:+<a href="$page[previous]" class="previous">&lt; ${${post:+Older Post}:-Newer Posts}</a>}
+		${page[next]:+<a href="$page[next]" class="next">${${post:+Newer Post}:-Older Posts} &gt;</a>}
+	</div>
+</div>
+
+<div id=posts>
+	$fragment[posts]
+</div>
+
+${${${blog[disqus]#0}:+content[post]}:+<div id="disqus_thread"><a href="http://disqus.com/forums/rummik/?url=ref">View the discussion thread.</a></div>}

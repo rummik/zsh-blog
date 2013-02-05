@@ -1,0 +1,17 @@
+blog+=(
+	title        'My Blog'
+	tagline      'Just another Zsh blog'
+	root         '/'
+	archives     '/archives'
+	posts        5
+	recent-posts 10
+
+	ftp_user     "$USER"
+	ftp_pass     ''
+	ftp_host     ''
+	ftp_root     '~/public_html'
+
+	ftp_cmd      '_zb_ftp'
+)
+
+# vim: set ft=zsh :
