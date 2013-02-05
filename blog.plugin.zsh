@@ -204,11 +204,11 @@ function _zb_archives {
 function blog {
 	local version=0.22-Alpha
 
-	local opt blog zblog content postid input post posts fragment page tags archives _zb_path _zb_link count fname tagpath weight
+	local opt blog zblog link links content postid input post posts fragment page tags archives _zb_path _zb_link count fname tagpath weight
 
 	emulate -L zsh
 	autoload -U regexp-replace
-	setopt re_match_pcre
+	setopt rematchpcre
 	setopt nonomatch
 
 	typeset -A blog
@@ -219,6 +219,7 @@ function blog {
 	typeset -A page
 	typeset -U archives
 	typeset -A count
+	typeset -A links
 
 	zblog=(
 		config  ~/.zblog/blog.conf
@@ -240,6 +241,10 @@ function blog {
 		ftp_root     '~/public_html'
 
 		ftp_cmd      '_zb_ftp'
+	)
+
+	links=(
+		'Home' '/'
 	)
 
 	while getopts hc: opt; do
@@ -396,6 +401,13 @@ function blog {
 				fragment[archives]="$fragment[archives]<li><a href=\"/archives/$p/\">$p</a></li>"
 			done
 			fragment[archives]="<ul>$fragment[archives]</ul>"
+
+			# build links fragment
+			fragment[links]=""
+			for link in ${(k)links}; do
+				fragment[links]+="<li><a href=\"$links[$link]\">$link</a></li>"
+			done
+			fragment[links]="<ul>$fragment[links]</ul>"
 
 			local date
 

@@ -14,4 +14,10 @@ blog+=(
 	ftp_cmd      '_zb_ftp'
 )
 
+links+=(
+	# 'Link text' 'http://link.url/'
+	'Gittip' 'https://www.gittip.com/rummik/'
+	'Github' 'https://github.com/rummik'
+)
+
 # vim: set ft=zsh :
