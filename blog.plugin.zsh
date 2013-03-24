@@ -202,7 +202,7 @@ function _zb_archives {
 }
 
 function blog {
-	local version=0.22-Alpha
+	local version=0.23-Alpha
 
 	local opt blog zblog link links content postid input post posts fragment page tags archives _zb_path _zb_link count fname tagpath weight
 
