@@ -384,21 +384,21 @@ function blog {
 				[[ $(ls -v ~/.zblog/content/cache/tags/$tag | wc -l) -eq 0 ]] && continue
 				tags=($tags $tag)
 				weight=$((($(ls -v ~/.zblog/content/cache/tags/$tag | wc -l).0 / $count[tags]) + 0.5))
-				fragment[tags]="$fragment[tags]<li><a href=\"/tags/$tag/\" style=\"font-size:${weight}0em\">$tag</a></li>"
+				fragment[tags]+="<li><a href=\"/tags/$tag/\" style=\"font-size:${weight}0em\">$tag</a></li>"
 			done
 			fragment[tags]="<ul>$fragment[tags]</ul>"
 
 			# build recent posts fragment
 			for p in $(ls -v -r ~/.zblog/content/cache/fragments/* | head -n $blog[recent-posts]); do
 				_zb_parse_post $p
-				fragment[recent-posts]="$fragment[recent-posts]<li><a href=\"$post[permalink]\">$(_zb_escape <<< $post[title])</a></li>"
+				fragment[recent-posts]+="<li><a href=\"$post[permalink]\">$(_zb_escape <<< $post[title])</a></li>"
 			done
 			fragment[recent-posts]="<ul>$fragment[recent-posts]</ul>"
 
 			# build archives fragment
 			for p in $archives; do
 				[[ ${#p} -gt 7 ]] && continue
-				fragment[archives]="$fragment[archives]<li><a href=\"/archives/$p/\">$p</a></li>"
+				fragment[archives]+="<li><a href=\"/archives/$p/\">$p</a></li>"
 			done
 			fragment[archives]="<ul>$fragment[archives]</ul>"
 
