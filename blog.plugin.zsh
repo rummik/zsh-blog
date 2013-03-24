@@ -22,11 +22,11 @@ function _zb_synedit {
 }
 
 function _zb_escape {
-	sed "	s/&/&amp;/g;
-		s/\"/&quot;/g;
-		s/'/&apos;/g;
-		s/</&lt;/g;
-		s/>/&gt;/g;" <<< $1
+	sed "	s/&/\&amp;/g;
+		s/\"/\&quot;/g;
+		s/'/\&apos;/g;
+		s/</\&lt;/g;
+		s/>/\&gt;/g;"
 }
 
 function _zb_template {
@@ -391,7 +391,7 @@ function blog {
 			# build recent posts fragment
 			for p in $(ls -v -r ~/.zblog/content/cache/fragments/* | head -n $blog[recent-posts]); do
 				_zb_parse_post $p
-				fragment[recent-posts]="$fragment[recent-posts]<li><a href=\"$post[permalink]\">$post[title]</a></li>"
+				fragment[recent-posts]="$fragment[recent-posts]<li><a href=\"$post[permalink]\">$(_zb_escape <<< $post[title])</a></li>"
 			done
 			fragment[recent-posts]="<ul>$fragment[recent-posts]</ul>"
 

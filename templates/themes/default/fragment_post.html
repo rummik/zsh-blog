@@ -1,6 +1,6 @@
 <div class="post" id=p$post[id]>
 	<span class="date">$(date -d "$post[date]" +"%A, %B %d, %Y")</span>
-	<h2 class="title"><a href="$post[permalink]">$post[title]</a></h2>
+	<h2 class="title"><a href="$post[permalink]">$(_zb_escape <<< $post[title])</a></h2>
 
 	<div class="content">
 		${${content[post]:+$post[body]}:-$post[preview]}
