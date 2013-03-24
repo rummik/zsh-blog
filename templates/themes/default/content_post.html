@@ -3,7 +3,7 @@
 	${page[year]:+&gt; <a href="/archives/$page[year]/">$page[year]</a>}
 	${page[month]:+&gt; <a href="/archives/$page[year]/$page[month]/">$page[month]</a>}
 	${page[day]:+&gt; <a href="/archives/$page[year]/$page[month]/$page[day]/">$page[day]</a>}
-	${post[title]:+&gt; <a href="$post[permalink]">$post[title]</a>}
+	${post[title]:+&gt; <a href="$post[permalink]">$(_zb_escape <<< $post[title])</a>}
 
 	<div>
 		${page[previous]:+<a href="$page[previous]" class="previous">&lt; ${${post:+Older Post}:-Newer Posts}</a>}
