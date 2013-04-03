@@ -1,6 +1,6 @@
 " Vim syntax file
 " Language:	zblog post syntax
-" Maintainer:	rummik <2l8@rummik.com>
+" Maintainer:	rummik <k@9k1.us>
 " Last Chnage:	Tue Jun 22 16:09:27 CDT 2010
 " Based On:	mail.vim
 
