@@ -8,26 +8,28 @@ if [[ -z "$ZBLOG_INSTALL_DIR" ]]; then
 	fi
 fi
 
+# find an editor and run it
 function _zb_edit {
 	local editor editors edited
 	editors=(pico nano vim ed)
+	editors=()
 
-	if [[ -z $EDITOR || ! -x $(which $EDITOR) ]]; then
-		print '$EDITOR not set or missing -- trying some defaults.'
-
-		for editor in $editors; do
-			[[ -x $(which $editor) ]] && _zb_synedit $editor $1 && edited=1
-		done
-
-		[[ -z $edited ]] && print 'Could not find an editor.' && return 1
-	else
+	if [[ ! -z $EDITOR && -x $(which $EDITOR) ]]; then
 		_zb_synedit $EDITOR $1
+		return 0
+	fi
+
+	print '$EDITOR not set or missing -- trying some defaults.'
+
+	if ! _zb_synedit "$(which $editors > /dev/null | grep -m 1 /)" $1; then
+		print 'Could not find an editor.'
+		return 1
 	fi
 }
 
 function _zb_synedit {
 	[[ $1 = vim ]] && vim -c 'source ~/.zblog/syntax/zblog.vim' $2 && return 0
-	$1 $2
+	[[ ! -z $1 ]] && $1 $2
 }
 
 function _zb_escape {
