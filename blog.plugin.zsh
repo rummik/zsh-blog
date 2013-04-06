@@ -1,4 +1,13 @@
 #!/bin/zsh
+
+# find where we're being called from
+if [[ -z "$ZBLOG_INSTALL_DIR" ]]; then
+	ZBLOG_INSTALL_DIR=${0:h}
+	if [[ "${ZBLOG_INSTALL_DIR:0:1}" != "/" ]]; then
+		ZBLOG_INSTALL_DIR=$PWD/$ZBLOG_INSTALL_DIR
+	fi
+fi
+
 function _zb_edit {
 	local editor editors edited
 	editors=(pico nano vim ed)
