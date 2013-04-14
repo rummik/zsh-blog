@@ -1,11 +1,9 @@
 Installation
 ============
 ```sh
+git clone git://github.com/rummik/zsh-blog.git ~/.zblog
 mkdir -p ~ZSH_CUSTOM/plugins
-cd ~ZSH_CUSTOM/plugins
-git clone git://github.com/rummik/zsh-blog.git blog
-cd blog
-git submodule update --init
+ln -s ~/.zblog/ ~ZSH_CUSTOM/plugins/blog
 ```
 
 Optionally edit your `~/.zshrc` manually to load `blog`, or with:
