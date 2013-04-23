@@ -246,7 +246,8 @@ function blog {
 	typeset -A count
 	typeset -A links
 
-	ZBWD="$ZBLOG_INSTALL_DIR"
+	#ZBWD="$ZBLOG_INSTALL_DIR"
+	ZBWD=~/.zblog
 
 	zblog=(
 		config  $ZBWD/blog.conf
