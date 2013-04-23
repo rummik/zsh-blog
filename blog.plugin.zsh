@@ -283,6 +283,12 @@ function blog {
 
 	[[ -e $zblog[config] ]] && . $zblog[config]
 
+	# TODO: move this to part of `blog init` when multiple blog support is added
+	if [[ ! -e $zblog[content] ]]; then
+		print Initializing blog...
+		cp -r $ZBLOG_INSTALL_DIR/default/path $ZBWD/content
+	fi
+
 	case $1 in
 		add|edit)
 			if [[ $1 = add ]]; then
