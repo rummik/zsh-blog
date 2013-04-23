@@ -3,7 +3,8 @@
 # find where we're being called from
 if [[ -z "$ZBLOG_INSTALL_DIR" ]]; then
 	ZBLOG_INSTALL_DIR=${0:h}
-	if [[ "${ZBLOG_INSTALL_DIR:0:1}" != "/" ]]; then
+
+	if [[ "${ZBLOG_INSTALL_DIR:0:1}" != "/" && "${ZBLOG_INSTALL_DIR:0:1}" != "~" ]]; then
 		ZBLOG_INSTALL_DIR=$PWD/$ZBLOG_INSTALL_DIR
 	fi
 fi
@@ -28,7 +29,7 @@ function _zb_edit {
 }
 
 function _zb_synedit {
-	[[ $1 = vim ]] && vim -c 'source ~/.zblog/syntax/zblog.vim' $2 && return 0
+	[[ $1 = vim ]] && vim -c 'source $ZBLOG_INSTALL_DIR/syntax/zblog.vim' $2 && return 0
 	[[ ! -z $1 ]] && $1 $2
 }
 
@@ -41,13 +42,13 @@ function _zb_escape {
 }
 
 function _zb_template {
-	print -r -- "${(e)"$(<~/.zblog/templates/themes/default/$1)"//\\/\\\\}"
+	print -r -- "${(e)"$(<$ZBWD/templates/themes/default/$1)"//\\/\\\\}"
 }
 
 function _zb_help {
 	local help
 	help=${1:-main}
-	[[ ! -f ~/.zblog/help/$help ]] && print "blog: No help for '$1'" || cat ~/.zblog/help/$help
+	[[ ! -f $ZBLOG_INSTALL_DIR/help/$help ]] && print "blog: No help for '$1'" || cat $ZBLOG_INSTALL_DIR/help/$help
 }
 
 function _zb_path {
@@ -73,7 +74,7 @@ function _zb_link {
 function _zb_permalink {
 	local post
 	post=${1#*-}
-	[[ ! -f ~/.zblog/content/posts/$post ]] && return 0
+	[[ ! -f $ZBWD/content/posts/$post ]] && return 0
 	print -- $blog[root]/archives/$(date -d "$(_zb_field date $post)" +'%Y/%m/%d')/$(print $(_zb_field title $post) | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9.-]\+/-/ig; s/^-\|-$//g')/\
 		| sed 's/\/\+/\//g;'
 }
@@ -81,14 +82,14 @@ function _zb_permalink {
 function _zb_parse_post {
 	local postid headers preview body
 	postid=${1#*-}
-	file=~/.zblog/content/posts/$postid
+	file=$ZBWD/content/posts/$postid
 
-	if [[ -f ~/.zblog/content/cache/parser/$postid ]]; then
-		eval $(<~/.zblog/content/cache/parser/$postid)
+	if [[ -f $ZBWD/content/cache/parser/$postid ]]; then
+		eval $(<$ZBWD/content/cache/parser/$postid)
 		return
 	fi
 
-	body=$(<~/.zblog/content/posts/$postid)
+	body=$(<$ZBWD/content/posts/$postid)
 	headers=$body
 
 	regexp-replace headers '\n-{4,}\n(\n|.)*' ''
@@ -123,7 +124,7 @@ function _zb_parse_post {
 	for key in ${(k)post}; do
 		print -r -- ${(qq)key} ${(qq)post[$key]}
 	done
-	print ')') > ~/.zblog/content/cache/parser/$postid
+	print ')') > $ZBWD/content/cache/parser/$postid
 }
 
 # returns 1 if flag not found, 0 if found
@@ -138,15 +139,15 @@ function _zb_flag {
 
 function _zb_field {
 	local file p postid post
-	p=~/.zblog/content/posts/
+	p=$ZBWD/content/posts/
 	file=$2
 	postid=${2#*-}
 
 	[[ $file[0,1] = '/' ]] && p=''
 
-	if [[ ! -z $p && -f ~/.zblog/content/cache/parser/$postid ]]; then
+	if [[ ! -z $p && -f $ZBWD/content/cache/parser/$postid ]]; then
 		typeset -A post
-		eval $(<~/.zblog/content/cache/parser/$postid)
+		eval $(<$ZBWD/content/cache/parser/$postid)
 		print $post[$1]
 		return
 	fi
@@ -182,7 +183,7 @@ function _zb_ftp {
 	if zfopen -1 "$blog[ftp_host]" "$blog[ftp_user]" "$blog[ftp_pass]"; then
 		if [[ -z $(zfls $blog[ftp_root]) ]] && zfmkdir
 		zfcd $blog[ftp_root]
-		zfput -r ~/.zblog/content/blog/*
+		zfput -r $ZBWD/content/blog/*
 		zfclose
 	fi
 }
@@ -205,17 +206,20 @@ function _zb_archives {
 		fragment[posts]=$(xargs cat <<< ${(F)posts[$(((i * $blog[posts]) + 1)),$(((i * $blog[posts]) + $blog[posts]))]})
 		page[content]=$(_zb_template content_post.html)
 
-		mkdir -p ~/.zblog/content/blog/$loc/$p
-		_zb_template layout.html > ~/.zblog/content/blog/$loc/${p}index.html
+		mkdir -p $ZBWD/content/blog/$loc/$p
+		_zb_template layout.html > $ZBWD/content/blog/$loc/${p}index.html
 
 		(( i++ ))
 	done
 }
 
-function blog {
-	local version=0.23-Alpha
+function _zb_dotfile {
+}
 
-	local opt blog zblog link links content postid input post posts fragment page tags archives _zb_path _zb_link count fname tagpath weight
+function blog {
+	local version=0.3-Alpha
+
+	local ZBLOG opt _blog blog zblog link links content postid input post posts fragment page tags archives _zb_path _zb_link count fname tagpath weight
 
 	emulate -L zsh
 	autoload -U regexp-replace
@@ -232,9 +236,11 @@ function blog {
 	typeset -A count
 	typeset -A links
 
+	ZBWD="$ZBLOG_INSTALL_DIR"
+
 	zblog=(
-		config  ~/.zblog/blog.conf
-		content ~/.zblog/content/blog
+		config  $ZBWD/blog.conf
+		content $ZBWD/content/blog
 		version $version
 	)
 
@@ -271,15 +277,15 @@ function blog {
 		add|edit)
 			if [[ $1 = add ]]; then
 				case $2 in
-					article) input=~/.zblog/templates/content/article;;
-					draft)   input=~/.zblog/templates/content/draft;;
-					*|post)  input=~/.zblog/templates/content/post;;
+					article) input=$ZBWD/templates/content/article;;
+					draft)   input=$ZBWD/templates/content/draft;;
+					*|post)  input=$ZBWD/templates/content/post;;
 				esac
 
-				postid=$(($(ls -v ~/.zblog/content/posts | tail -n 1) + 1))
-			elif [[ ! $(printf '%d' "$2") = 0 && -f ~/.zblog/content/posts/$(printf '%d' "$2") ]]; then
+				postid=$(($(ls -v $ZBWD/content/posts | tail -n 1) + 1))
+			elif [[ ! $(printf '%d' "$2") = 0 && -f $ZBWD/content/posts/$(printf '%d' "$2") ]]; then
 				postid=$(printf '%d' "$2")
-				input=~/.zblog/content/posts/$(printf '%d' "$2")
+				input=$ZBWD/content/posts/$(printf '%d' "$2")
 			else
 				print 'Nothing to edit.'
 				return 0
@@ -298,13 +304,13 @@ function blog {
 			_zb_fieldnx ' *[^ ].*$' author $(whoami)
 			_zb_fieldnx '.{8,}$'    date   "$(date -R)"
 
-			if [[ -f ~/.zblog/content/posts/$postid ]]; then
+			if [[ -f $ZBWD/content/posts/$postid ]]; then
 				print "Updating post ($postid)."
 			else
 				print "Adding post ($postid)."
 			fi
 
-			cp /tmp/zblog.tmp.$$ ~/.zblog/content/posts/$postid
+			cp /tmp/zblog.tmp.$$ $ZBWD/content/posts/$postid
 			$0 update;;
 
 		ls)
@@ -316,52 +322,52 @@ function blog {
 			printf $format 'Post ID' 'Flags' 'Title' 'Tags'
 			print -- ${(l.((${COLUMNS}))..-.)}
 
-			for postid in $(ls -v ~/.zblog/content/posts); do
+			for postid in $(ls -v $ZBWD/content/posts); do
 				_zb_parse_post $postid
 				printf $format $postid "$post[flags]" "$post[title]" "$post[tags]"
 			done;;
 
 		rm)
 			postid=$(printf '%d' $2)
-			[[ ! -f ~/.zblog/content/posts/$postid ]] && print 'Sorry, no post by that ID.' && return 1
+			[[ ! -f $ZBWD/content/posts/$postid ]] && print 'Sorry, no post by that ID.' && return 1
 
 			print -n "Really delete post ($postid)? [yes/No] "
 			read answer
 
 			if [[ $(tr '[A-Z]' '[a-z]' <<< $answer) = 'yes' ]]; then
 				print "Deleting post ($postid)."
-				rm ~/.zblog/content/posts/$postid
+				rm $ZBWD/content/posts/$postid
 			else
 				print "Not deleting post ($postid)."
 			fi
 
 			$0 regen;;
 
-		clean) [[ ! $(ls ~/.zblog/content/cache/posts 2>/dev/null | wc -l) -eq 0 ]] && (rm -rf ~/.zblog/content/cache/*);;
+		clean) [[ ! $(ls $ZBWD/content/cache/posts 2>/dev/null | wc -l) -eq 0 ]] && (rm -rf $ZBWD/content/cache/*);;
 
 		regen|regenerate)
 			$0 clean
 			$0 update;;
 
 		update)
-			if [[ $(ls ~/.zblog/content/posts/ | wc -l) -eq 0 ]]; then
+			if [[ $(ls $ZBWD/content/posts/ | wc -l) -eq 0 ]]; then
 				print 'Nothing to do...'
 				return
 			fi
 
 			print 'Updating blog...'
 
-			mkdir -p ~/.zblog/content/cache/{fragments,tags,parser,posts}
+			mkdir -p $ZBWD/content/cache/{fragments,tags,parser,posts}
 
 			content=()
 			# generate fragment and tag cache (improves speed a bit)
-			for p in $(diff -q ~/.zblog/content/posts ~/.zblog/content/cache/posts | sed 's/^.\+: //; s/.\+posts\/\([0-9]\+\) .*/\1/;' | sort -n); do
-				rm -f ~/.zblog/content/cache/fragments/*-$p
-				rm -f ~/.zblog/content/cache/tags/*/*-$p
-				rm -f ~/.zblog/content/cache/parser/$p
+			for p in $(diff -q $ZBWD/content/posts $ZBWD/content/cache/posts | sed 's/^.\+: //; s/.\+posts\/\([0-9]\+\) .*/\1/;' | sort -n); do
+				rm -f $ZBWD/content/cache/fragments/*-$p
+				rm -f $ZBWD/content/cache/tags/*/*-$p
+				rm -f $ZBWD/content/cache/parser/$p
 
-				if [[ ! -f ~/.zblog/content/posts/$p ]]; then
-					rm ~/.zblog/content/cache/posts/$p
+				if [[ ! -f $ZBWD/content/posts/$p ]]; then
+					rm $ZBWD/content/cache/posts/$p
 				else
 					_zb_parse_post $p
 
@@ -371,36 +377,36 @@ function blog {
 
 					fname=$(date -d "${post[date]}" +'%Y%m%d%H%M%S')-$post[id]
 
-					_zb_template fragment_post.html > ~/.zblog/content/cache/fragments/$fname
+					_zb_template fragment_post.html > $ZBWD/content/cache/fragments/$fname
 
-					cp ~/.zblog/content/posts/$p ~/.zblog/content/cache/posts/
+					cp $ZBWD/content/posts/$p $ZBWD/content/cache/posts/
 
 					for tag in ${(s:, :)post[tags]}; do
-						tagpath=~/.zblog/content/cache/tags/$tag
+						tagpath=$ZBWD/content/cache/tags/$tag
 						mkdir -p $tagpath
-						ln -s ~/.zblog/content/cache/fragments/$fname $tagpath/$fname
+						ln -s $ZBWD/content/cache/fragments/$fname $tagpath/$fname
 					done
 				fi
 			done
 
 			# build archives bit
-			for p in $(ls -vr ~/.zblog/content/cache/fragments); do
+			for p in $(ls -vr $ZBWD/content/cache/fragments); do
 				archives=($archives ${=$(date -d "$(_zb_field date $p)" +"%Y %Y/%m %Y/%m/%d")})
 			done
 
 			# build tag cloud fragment
 			tags=
-			count[tags]=$(ls -v ~/.zblog/content/cache/tags | wc -l)
-			for tag in $(ls -v ~/.zblog/content/cache/tags); do
-				[[ $(ls -v ~/.zblog/content/cache/tags/$tag | wc -l) -eq 0 ]] && continue
+			count[tags]=$(ls -v $ZBWD/content/cache/tags | wc -l)
+			for tag in $(ls -v $ZBWD/content/cache/tags); do
+				[[ $(ls -v $ZBWD/content/cache/tags/$tag | wc -l) -eq 0 ]] && continue
 				tags=($tags $tag)
-				weight=$((($(ls -v ~/.zblog/content/cache/tags/$tag | wc -l).0 / $count[tags]) + 0.5))
+				weight=$((($(ls -v $ZBWD/content/cache/tags/$tag | wc -l).0 / $count[tags]) + 0.5))
 				fragment[tags]+="<li><a href=\"/tags/$tag/\" style=\"font-size:${weight}0em\">$tag</a></li>"
 			done
 			fragment[tags]="<ul>$fragment[tags]</ul>"
 
 			# build recent posts fragment
-			for p in $(ls -v -r ~/.zblog/content/cache/fragments/* | head -n $blog[recent-posts]); do
+			for p in $(ls -v -r $ZBWD/content/cache/fragments/* | head -n $blog[recent-posts]); do
 				_zb_parse_post $p
 				fragment[recent-posts]+="<li><a href=\"$post[permalink]\">$(_zb_escape <<< $post[title])</a></li>"
 			done
@@ -424,7 +430,7 @@ function blog {
 
 			# iterate through fragments (in order) and build their pages
 			content=(post 1)
-			posts=($(ls -v ~/.zblog/content/cache/fragments/))
+			posts=($(ls -v $ZBWD/content/cache/fragments/))
 			count[posts]=${#posts}
 			i=0
 			for p in $posts; do
@@ -443,8 +449,8 @@ function blog {
 				fragment[posts]=$(_zb_template fragment_post.html)
 				page[content]=$(_zb_template content_post.html)
 
-				mkdir -p ~/.zblog/content/blog/$post[permalink]
-				_zb_template layout.html > ~/.zblog/content/blog/$post[permalink]/index.html
+				mkdir -p $ZBWD/content/blog/$post[permalink]
+				_zb_template layout.html > $ZBWD/content/blog/$post[permalink]/index.html
 			done
 			post=
 
@@ -452,12 +458,12 @@ function blog {
 			print /archives/
 			content=(archive 1)
 			page=()
-			posts=($(ls -v -r ~/.zblog/content/cache/fragments/*))
+			posts=($(ls -v -r $ZBWD/content/cache/fragments/*))
 			_zb_archives archives
 			for archive in $archives; do
 				print /archives/$archive/
 				page=($(sed 's/\([0-9]\+\)/year \1/; s/\/\([0-9]\+\)/ month \1/; s/\/\([0-9]\+\)/ day \1/' <<< $archive))
-				posts=($(ls -v -r ~/.zblog/content/cache/fragments/${archive//\//}*))
+				posts=($(ls -v -r $ZBWD/content/cache/fragments/${archive//\//}*))
 				_zb_archives archives/$archive
 			done
 
@@ -466,17 +472,17 @@ function blog {
 			content=(tag 1)
 			for tag in $tags; do
 				print /tags/$tag/
-				posts=($(ls -v -r ~/.zblog/content/cache/tags/$tag/*))
+				posts=($(ls -v -r $ZBWD/content/cache/tags/$tag/*))
 				_zb_archives tags/$tag
 			done
 
 			# build main page
 			content=(home 1)
 			print /
-			if [[ $(ls ~/.zblog/content/cache/fragments/ | wc -l) -gt $blog[posts] ]]; then page=(next /archives/p1/); else page=(); fi
-			fragment[posts]=$(for j in $(ls -v -r ~/.zblog/content/cache/fragments/ | head -n $blog[posts]); do <~/.zblog/content/cache/fragments/$j; done)
+			if [[ $(ls $ZBWD/content/cache/fragments/ | wc -l) -gt $blog[posts] ]]; then page=(next /archives/p1/); else page=(); fi
+			fragment[posts]=$(for j in $(ls -v -r $ZBWD/content/cache/fragments/ | head -n $blog[posts]); do <$ZBWD/content/cache/fragments/$j; done)
 			page[content]=$(_zb_template content_post.html)
-			_zb_template layout.html > ~/.zblog/content/blog/index.html;;
+			_zb_template layout.html > $ZBWD/content/blog/index.html;;
 
 		push) eval $blog[ftp_cmd];;
 
