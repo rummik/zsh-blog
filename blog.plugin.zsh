@@ -44,7 +44,7 @@ function _zb_escape {
 
 # super short templating engine -- uses ZSH variable expansion, because it's fancy like that
 function _zb_template {
-	print -r -- "${(e)"$(<$ZBWD/templates/themes/default/$1)"//\\/\\\\}"
+	print -r -- "${(e)"$(<$ZBLOG_INSTALL_DIR/templates/themes/default/$1)"//\\/\\\\}"
 }
 
 # look up some help for a command
@@ -293,9 +293,9 @@ function blog {
 		add|edit)
 			if [[ $1 = add ]]; then
 				case $2 in
-					article) input=$ZBWD/templates/content/article;;
-					draft)   input=$ZBWD/templates/content/draft;;
-					*|post)  input=$ZBWD/templates/content/post;;
+					article) input=$ZBLOG_INSTALL_DIR/templates/content/article;;
+					draft)   input=$ZBLOG_INSTALL_DIR/templates/content/draft;;
+					*|post)  input=$ZBLOG_INSTALL_DIR/templates/content/post;;
 				esac
 
 				postid=$(($(ls -v $ZBWD/content/posts | tail -n 1) + 1))
