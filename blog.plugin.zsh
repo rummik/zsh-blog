@@ -33,6 +33,7 @@ function _zb_synedit {
 	[[ ! -z $1 ]] && $1 $2
 }
 
+# escape some things that could break links, titles, etc
 function _zb_escape {
 	sed "	s/&/\&amp;/g;
 		s/\"/\&quot;/g;
@@ -41,10 +42,12 @@ function _zb_escape {
 		s/>/\&gt;/g;"
 }
 
+# super short templating engine -- uses ZSH variable expansion, because it's fancy like that
 function _zb_template {
 	print -r -- "${(e)"$(<$ZBWD/templates/themes/default/$1)"//\\/\\\\}"
 }
 
+# look up some help for a command
 function _zb_help {
 	local help
 	help=${1:-main}
@@ -79,6 +82,7 @@ function _zb_permalink {
 		| sed 's/\/\+/\//g;'
 }
 
+# parse zblog-format posts, or load post from cache
 function _zb_parse_post {
 	local postid headers preview body
 	postid=${1#*-}
@@ -127,6 +131,7 @@ function _zb_parse_post {
 	print ')') > $ZBWD/content/cache/parser/$postid
 }
 
+# check if a flag exists for a post
 # returns 1 if flag not found, 0 if found
 function _zb_flag {
 	flag=$1
@@ -137,6 +142,7 @@ function _zb_flag {
 	fi
 }
 
+# get the value of a field in a post's header
 function _zb_field {
 	local file p postid post
 	p=$ZBWD/content/posts/
@@ -170,6 +176,7 @@ function _zb_field {
 	print $headers
 }
 
+# helpter to autofill a field if it's missing or empty
 function _zb_fieldnx {
 	[[ -z "$(grep -E "^$2:" /tmp/zblog.tmp.$$ -m 1)" ]] && \
 		sed -i 's/^\(-\{4,\}\)/'"$2"': \n\1/;' /tmp/zblog.tmp.$$
@@ -178,6 +185,7 @@ function _zb_fieldnx {
 		sed -i "s/^$2:.\+$/$2: $3/;" /tmp/zblog.tmp.$$
 }
 
+# ftp wrapper
 function _zb_ftp {
 	autoload -U zfinit; zfinit
 	if zfopen -1 "$blog[ftp_host]" "$blog[ftp_user]" "$blog[ftp_pass]"; then
@@ -216,6 +224,8 @@ function _zb_archives {
 function _zb_dotfile {
 }
 
+# magic happens here
+# should really go the route of _zb_blog-<action>, and turn this into a bit of a wrapper/setup function
 function blog {
 	local version=0.3-Alpha
 
