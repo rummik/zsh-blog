@@ -134,6 +134,7 @@ function _zb_parse_post {
 # check if a flag exists for a post
 # returns 1 if flag not found, 0 if found
 function _zb_flag {
+	local flag flags
 	flag=$1
 	flags=$2
 
