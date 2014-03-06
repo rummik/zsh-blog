@@ -245,7 +245,6 @@ function blog {
 	typeset -A page
 	typeset -U archives
 	typeset -A count
-	typeset -A links
 
 	#ZBWD="$ZBLOG_INSTALL_DIR"
 	ZBWD=~/.zblog
@@ -439,8 +438,8 @@ function blog {
 
 			# build links fragment
 			fragment[links]=""
-			for link in ${(k)links}; do
-				fragment[links]+="<li><a href=\"$links[$link]\">$link</a></li>"
+			for ((i=1; i<$#links; i+=2)); do
+				fragment[links]+="<li><a href=\"${links[i]}\">${links[i+1]}</a></li>"
 			done
 			fragment[links]="<ul>$fragment[links]</ul>"
 
