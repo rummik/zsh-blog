@@ -177,7 +177,7 @@ function blog-regen {
 function -blog-load-plugins {
 	local _i _load load
 
-	for _i in 1..$#plugins do
+	for _i in 1..$#plugins; do
 		load=''
 
 		[[ -f ${_load::="$ZSH_BLOG/plugins/${plugins[i]}.zsh"} ]] &&
@@ -193,7 +193,7 @@ function -blog-load-plugins {
 
 function -blog-load-fragments {
 	local i
-	for i in 1..$#plugins do
+	for i in 1..$#plugins; do
 		functions -- + "-blog-fragment-${plugins[i]}" > /dev/null &&
 			fragments[$plugins[i]]="$("-blog-fragment-${plugins[i]}")"
 	done
