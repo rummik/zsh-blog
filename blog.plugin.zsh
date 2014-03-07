@@ -91,11 +91,11 @@ function -blog-root {
 }
 
 # completion
-function _blog-completion {
+function _blog {
 	emulate -L zsh
 
 	local curcontext="$curcontext" context state state_descr line
-	typeset -A opt_args
+	local -A opt_args
 
 	_arguments \
 		'1: :->command' \
@@ -113,7 +113,7 @@ function _blog-completion {
 	esac
 }
 
-compdef _blog-completion blog
+compdef _blog blog
 
 
 # actions
