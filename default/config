@@ -1,6 +1,7 @@
 blog+=(
 	title        'My Blog'
 	tagline      'Just another Zsh blog'
+	theme        'default'
 	root         '/'
 	archives     '/archives'
 	posts        5
