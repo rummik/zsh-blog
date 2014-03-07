@@ -172,11 +172,32 @@ function blog-regen {
 }
 
 
-# plugins
+# loaders
 # -------
 
-function -blog-plugin-links {
-	local links
+function -blog-load-plugins {
+	local _i _load load
+
+	for _i in 1..$#plugins do
+		load=''
+
+		[[ -f ${_load::="$ZSH_BLOG/plugins/${plugins[i]}.zsh"} ]] &&
+			load=$_load
+
+		[[ -f ${_load::="$BROOT/plugins/${plugins[i]}.zsh"} ]] &&
+			load=$_load
+
+		[[ ! -z $load && $BLOG_LOADED[$plugins[i]] != $load ]] &&
+			source ${BLOG_LOADED[$plugins[i]]::=$load}
+	done
+}
+
+function -blog-load-fragments {
+	local i
+	for i in 1..$#plugins do
+		functions -- + "-blog-fragment-${plugins[i]}" > /dev/null &&
+			fragments[$plugins[i]]="$("-blog-fragment-${plugins[i]}")"
+	done
 }
 
 
