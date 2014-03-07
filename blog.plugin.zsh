@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-ZSH_BLOG_VERSION=0.3
+ZSH_BLOG_VERSION=0.5
 
 autoload -U regexp-replace
 
