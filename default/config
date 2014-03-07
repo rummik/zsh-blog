@@ -5,13 +5,21 @@ blog+=(
 	archives     '/archives'
 	posts        5
 	recent-posts 10
+)
 
-	ftp_user     "$USER"
-	ftp_pass     ''
-	ftp_host     ''
-	ftp_root     '~/public_html'
+publish+=(
+	transport 'ftp'
 
-	ftp_cmd      '_zb_ftp'
+	user      "$USER"
+	pass      ''
+	host      ''
+	root      '~/public_html'
+)
+
+links+=(
+	# 'Link text' 'http://link.url/'
+	'Gittip' 'https://www.gittip.com/rummik/'
+	'Github' 'https://github.com/rummik'
 )
 
 # vim: set ft=zsh :
