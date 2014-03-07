@@ -25,6 +25,16 @@ function blog {
 	local -a links plugins
 	local -A blog args
 
+	plugins=(links)
+
+	blog=(
+		title        'My Blog'
+		tagline      'Just another Zsh blog'
+		root         '/'
+		archives     '/archives'
+		posts        5
+		recent-posts 10
+	)
 
 	## handle option parsing
 	zparseopts -E -D -version=version -help=help
