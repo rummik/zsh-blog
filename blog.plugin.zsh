@@ -104,10 +104,7 @@ function _blog-completion {
 
 	case $state in
 		command)
-			local completions="$(functions -m + 'blog-*')"
-			regexp-replace completions '\s?blog-' ' '
-			compadd -- ${=completions}
-			;;
+			compadd -- ${="$(whence -mw 'blog-*')"//(blog-|: (function|alias|command))};;
 
 		argument)
 			BROOT=$(-blog-root)
