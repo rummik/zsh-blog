@@ -201,8 +201,8 @@ function -blog-load-fragments {
 }
 
 
-# database things
-# ---------------
+# database
+# --------
 
 function -blog-getNewPostID {
 	return $(($(ls -v $BROOT/content/posts | tail -n 1) + 1))
