@@ -1,6 +1,6 @@
-Usage: blog [-c config] [option...] <action>
+Usage: blog [--version] [--help] <command> [args]
 
-Actions:
+Commands:
   add [post|draft]		Create a new post or draft.
   edit <id>			Edit post <id>.
   ls [id]			List posts, or post [id].
@@ -9,9 +9,10 @@ Actions:
   push				Publish blog.
   clean				Clean out blog cache.
   regen				Alias of blog clean && blog update.
-  help <action>			Display help for <action>.
+  help <command>		Display help for <command>.
 
 Options:
-  -c <config>			Use an alternate config file.
-				(Default is ~/.zblog/zblog.conf)
-  -h				Display this help.
+  --version			Display the current version.
+  --help			Display help.
+
+See 'blog help <command>' for more information on a specific command.
