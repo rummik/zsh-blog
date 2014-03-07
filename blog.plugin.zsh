@@ -57,7 +57,7 @@ function blog {
 
 
 	## divvy up commands to their respective functions
-	if ! functions "blog-$cmd" > /dev/null; then
+	if ! functions + "blog-$cmd" > /dev/null; then
 		print "blog: '$cmd' is not a blog command. See 'blog --help'."
 	else
 		BROOT=$(-blog-root)
