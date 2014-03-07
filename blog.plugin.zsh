@@ -21,6 +21,8 @@ fi
 # main blog function
 # divvys up commands to functions, as well as handles other important things
 function blog {
+	emulate -L zsh
+
 	local BROOT cmd version help
 	local -a links plugins
 	local -A blog args
@@ -90,6 +92,8 @@ function -blog-root {
 
 # completion
 function _blog-completion {
+	emulate -L zsh
+
 	local curcontext="$curcontext" context state state_descr line
 	typeset -A opt_args
 
