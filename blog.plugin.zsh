@@ -267,3 +267,25 @@ function -blog-escape {
 
 	print $string
 }
+
+# get the value of a header from a post
+function -blog-getPostHeader {
+	local id=${2#*-} header=$1 file=$2
+
+	if [[ -f $BROOT/cache/parser/$id ]]; then
+		local -A post
+		source $BROOT/cache/parser/$id
+		print $post[$header]
+		return
+	fi
+
+	[[ $file[0,1] != '/' ]] &&
+		file=$BROOT/posts/$file
+
+	data=${${${"$(<$file)"%%($'\n'|$'\r')----*}##*($'\n'|$'\r')$header: }%%($'\n'|$'\r')*}
+
+	if [[ $header = (tags|flags) ]] &&
+		data=($=data)
+
+	print -- $data
+}
