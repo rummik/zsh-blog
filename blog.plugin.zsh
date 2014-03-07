@@ -249,7 +249,7 @@ function -blog-edit {
 # helper to load syntax highlighting for editor
 function -blog-editor {
 	case $1 in
-		vim) vim -c 'source $ZSH_BLOG/syntax/zblog.vim' $2;;
+		vim) vim -c "source $ZSH_BLOG/syntax/zblog.vim" $2;;
 		'') return 1;;
 		*) $1 $2;;
 	esac
