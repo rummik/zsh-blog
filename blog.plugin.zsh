@@ -160,9 +160,8 @@ function blog-ls {
 
 ## clean up blog cache
 function blog-clean {
-	if [[ $(ls $BROOT/content/cache/posts 2>/dev/null | wc -l) -gt 0 ]]; then
+	[[ $(ls $BROOT/content/cache/posts 2>/dev/null | wc -l) -gt 0 ]] &&
 		(rm -rf $BROOT/content/cache/*)
-	fi
 }
 
 ## clean blog cache and rebuild blog
