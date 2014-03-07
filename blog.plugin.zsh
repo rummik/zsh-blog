@@ -141,6 +141,12 @@ function blog-edit {
 
 ## initialize a new blog
 function blog-init {
+	if [[ ! -d $BROOT ]]; then
+		cp -r $ZSH_BLOG/default $BROOT
+		print Initialized emptly blog in $BROOT
+	else
+		print Politely declining to reinitialize blog in $BROOT
+	fi
 }
 
 ## list blog posts
