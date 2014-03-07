@@ -8,9 +8,13 @@ autoload -U regexp-replace
 if [[ -z "$ZSH_BLOG" ]]; then
 	ZSH_BLOG=${0:h}
 
-	if [[ "${ZSH_BLOG:0:1}" != "/" && "${ZSH_BLOG:0:1}" != "~" ]]; then
+	# fix for sourcing from the current directory
+	[[ $ZSH_BLOG == . ]] &&
+		ZSH_BLOG=$PWD
+
+	# try to get an absolute path
+	[[ "${ZSH_BLOG:0:1}" != "/" && "${ZSH_BLOG:0:1}" != "~" ]] &&
 		ZSH_BLOG=$PWD/$ZSH_BLOG
-	fi
 fi
 
 
