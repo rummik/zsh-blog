@@ -165,7 +165,7 @@ function blog-ls {
 	printf $format 'Post ID' 'Flags' 'Title' 'Tags'
 	print -- ${(l.$COLUMNS..-.)}
 
-	for postid in $(ls -v $BROOT/posts 2> /dev/null); do
+	for postid in $([[ -f $BROOT/posts/$1 ]] && print $1 || ls -v $BROOT/posts 2> /dev/null); do
 		-blog-parse-post $postid
 		printf $format $postid "$post[flags]" "$post[title]" "$post[tags]"
 	done
