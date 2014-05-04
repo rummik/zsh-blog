@@ -56,8 +56,10 @@ function blog {
 
 
 	## set $cmd if it is not set (default to 'help')
-	[[ -z $cmd ]] &&
-		cmd=${1:-help} && shift
+	if [[ -z $cmd ]]; then
+		cmd=${1:-help}
+		[[ $# -gt 1 ]] && shift
+	fi
 
 
 	## divvy up commands to their respective functions
