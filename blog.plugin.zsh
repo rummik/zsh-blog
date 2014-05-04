@@ -159,12 +159,13 @@ function blog-ls {
 	local titleWidth=${$(((COLUMNS - 22) / 1.5))%%.*}
 	local tagWidth=$(((COLUMNS - 22) - $titleWidth))
 	local format="%8.8s | %-5.5s | %-${titleWidth}.${titleWidth}s | %-${tagWidth}.${tagWidth}s\n"
+	local -A post
 
 	printf $format 'Post ID' 'Flags' 'Title' 'Tags'
 	print -- ${(l.$COLUMNS..-.)}
 
-	for postid in $(ls -v $BROOT/content/posts 2> /dev/null); do
-		_zb_parse_post $postid
+	for postid in $(ls -v $BROOT/posts 2> /dev/null); do
+		-blog-parse-post $postid
 		printf $format $postid "$post[flags]" "$post[title]" "$post[tags]"
 	done
 }
