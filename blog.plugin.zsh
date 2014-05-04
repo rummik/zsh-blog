@@ -220,6 +220,12 @@ function -blog-getPostByDate {
 }
 
 function -blog-getPostByID {
+	local file=$BROOT/posts/$(printf '%d' "$1")
+
+	[[ $(printf '%d' "$1") = 0 || ! -f $file ]] &&
+		return 1
+
+	print $file
 }
 
 
