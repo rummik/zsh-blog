@@ -292,7 +292,7 @@ function -blog-getPostHeader {
 	[[ $file[0,1] != '/' ]] &&
 		file=$BROOT/posts/$file
 
-	data=${${${"$(<$file)"%%($'\n'|$'\r')----*}##*($'\n'|$'\r')$header: }%%($'\n'|$'\r')*}
+	data=${${${"$(cat - $file <<< '')"%%($'\n'|$'\r')----*}##*($'\n'|$'\r')$header: }%%($'\n'|$'\r')*}
 
 	if [[ $header = (tags|flags) ]] &&
 		data=($=data)
