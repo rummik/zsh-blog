@@ -4,6 +4,7 @@ ZSH_BLOG_VERSION=0.5
 
 autoload -U regexp-replace
 zmodload zsh/pcre
+zmodload zsh/mathfunc
 
 # find where we're being called from
 if [[ -z "$ZSH_BLOG" ]]; then
@@ -156,7 +157,7 @@ function blog-init {
 ## list blog posts
 alias blog-list=blog-ls
 function blog-ls {
-	local titleWidth=${$(((COLUMNS - 22) / 1.5))%%.*}
+	local titleWidth=$((int((COLUMNS - 22) / 1.5)))
 	local tagWidth=$(((COLUMNS - 22) - $titleWidth))
 	local format="%8.8s | %-5.5s | %-${titleWidth}.${titleWidth}s | %-${tagWidth}.${tagWidth}s\n"
 	local -A post
