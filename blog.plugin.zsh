@@ -291,3 +291,52 @@ function -blog-getPostHeader {
 
 	print -- $data
 }
+
+# parse post into something a bit more useful
+function -blog-parse-post {
+	local postid headers preview body
+	postid=${1#*-}
+	file=$BROOT/posts/$postid
+
+	if [[ -f $BROOT/cache/parser/$postid ]]; then
+		eval $(<$BROOT/cache/parser/$postid)
+		return
+	fi
+
+	body=$(<$BROOT/posts/$postid)
+	headers=$body
+
+	regexp-replace headers '\n-{4,}\n(\n|.)*' ''
+
+	regexp-replace body '(\n|.)*\n-{4,}\n' ''
+	regexp-replace body '\n' '<br>'$'\n'
+	regexp-replace body '<br>\n~{4,}(<br>|\s)*$' ''
+
+	preview=$body
+	regexp-replace preview '\n~{4,}(<br>(\n|.)*|$)' ''
+
+	regexp-replace body '<br>\n~{4,}(<br>|$)' '<br><br>'
+
+	post=(
+		'id'		$postid
+		'title'		"$(-blog-getPostHeader title $file)"
+		'tags'		"$(-blog-getPostHeader tags $file)"
+		'date'		"$(-blog-getPostHeader date $file)"
+		'author'	"$(-blog-getPostHeader author $file)"
+		'preview'	"$preview"
+		'body'		"$body"
+		#'permalink'	"$(_zb_permalink $postid)"
+		'flags'		"$(-blog-getPostHeader flags $file)"
+	)
+
+
+	# set post_preview to post_body if the preview is empty
+	# TODO: create a short version if the preview does not exist
+	post[preview]=${post[preview]:-$post[body]}
+
+	(print 'post=('
+	for key in ${(k)post}; do
+		print -r -- ${(qq)key} ${(qq)post[$key]}
+	done
+	print ')') > $BROOT/cache/parser/$id
+}
