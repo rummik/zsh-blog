@@ -142,6 +142,13 @@ function blog-add {
 
 ## edit a blog post
 function blog-edit {
+	local file=$BROOT/posts/$1
+
+	if [[ -f $file ]]; then
+		-blog-edit $file
+	else
+		print blog: Nothing to edit.
+	fi
 }
 
 ## initialize a new blog
