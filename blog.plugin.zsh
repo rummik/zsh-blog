@@ -26,7 +26,7 @@ function blog {
 	setopt rematchpcre
 
 	local BROOT cmd version help
-	local -a links plugins
+	local -a plugins
 	local -A blog args
 
 	plugins=(links)
