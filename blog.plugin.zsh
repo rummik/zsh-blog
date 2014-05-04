@@ -346,5 +346,5 @@ function -blog-parse-post {
 	for key in ${(k)post}; do
 		print -r -- ${(qq)key} ${(qq)post[$key]}
 	done
-	print ')') > $BROOT/cache/parser/$id
+	print ')') > $BROOT/cache/parser/$postid
 }
