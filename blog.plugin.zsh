@@ -3,6 +3,7 @@
 ZSH_BLOG_VERSION=0.5
 
 autoload -U regexp-replace
+zmodload zsh/pcre
 
 # find where we're being called from
 if [[ -z "$ZSH_BLOG" ]]; then
@@ -22,6 +23,7 @@ fi
 # divvys up commands to functions, as well as handles other important things
 function blog {
 	emulate -L zsh
+	setopt rematchpcre
 
 	local BROOT cmd version help
 	local -a links plugins
