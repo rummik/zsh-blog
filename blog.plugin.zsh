@@ -269,7 +269,8 @@ function -blog-edit {
 
 		rm $temp
 	else
-		print blog: Nothing to do.
+		print blog: Nothing to edit.
+		return=1
 	fi
 
 	return $return
