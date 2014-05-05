@@ -2,7 +2,7 @@ Usage: blog [--version] [--help] <command> [args]
 
 Commands:
   init				Initialize a new blog in the current directory.
-  add [post|draft]		Create a new post or draft.
+  new [post|draft]		Create a new post or draft.
   edit <id>			Edit post <id>.
   ls [id]			List posts, or post [id].
   rm <id>			Delete post <id>.
