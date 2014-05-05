@@ -137,7 +137,23 @@ function blog-help {
 }
 
 ## create a blog post
-function blog-add {
+alias blog-add=blog-new
+function blog-new {
+	local type=${1:-post}
+	local source=$ZSH_BLOG/templates/content/$type
+	local file=$(-blog-mktemp)
+
+	if [[ -f $source ]]; then
+		cp $source $file
+
+		if -blog-edit $file; then
+			mv $file $BROOT/posts/$(-blog-getNewPostID)
+		else
+			rm $file
+		fi
+	else
+		print "blog: Unknown post type '$type'."
+	fi
 }
 
 ## edit a blog post
