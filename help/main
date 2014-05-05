@@ -9,7 +9,7 @@ Commands:
   update			Update blog.
   push				Publish blog.
   clean				Clean out blog cache.
-  regen				Alias of blog clean && blog update.
+  regen				Alias of `blog clean && blog update`.
   help <command>		Display help for <command>.
 
 Options:
