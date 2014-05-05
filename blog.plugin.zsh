@@ -59,7 +59,7 @@ function blog {
 	## set $cmd if it is not set (default to 'help')
 	if [[ -z $cmd ]]; then
 		cmd=${1:-help}
-		[[ $# -gt 1 ]] && shift
+		[[ $# -gt 0 ]] && shift
 	fi
 
 
