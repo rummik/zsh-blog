@@ -142,12 +142,9 @@ function blog-add {
 
 ## edit a blog post
 function blog-edit {
-	local file=$BROOT/posts/$1
-
-	if [[ -f $file ]]; then
-		-blog-edit $file
-	else
-		print blog: Nothing to edit.
+	if -blog-edit $BROOT/posts/$1; then
+		print "blog: Updating post ($1)."
+		blog-update
 	fi
 }
 
@@ -243,22 +240,52 @@ function -blog-getPostByID {
 # helpers
 # -------
 
+# create a temp file
+function -blog-mktemp {
+	mktemp -u /tmp/blog-post.XXXXX
+}
+
 # templating engine
 function -blog-template {
 	print -r -- "${(e)"$(<$ZSH_BLOG/templates/themes/${blog[theme]:-default}/$1)"//\\/\\\\}"
 }
 
-# find an editor and run it
+# edit a file
 function -blog-edit {
+	local source=$1
+	local temp=$(-blog-mktemp)
+	local return=0
+
+	if [[ -f $source ]]; then
+		cp $source $temp
+		-blog-editor $temp
+
+		if ! diff $source $temp > /dev/null; then
+			cp $temp $source
+		else
+			print blog: Nothing to do.
+			return=1
+		fi
+
+		rm $temp
+	else
+		print blog: Nothing to do.
+	fi
+
+	return $return
+}
+
+# find an editor and run it
+function -blog-editor {
 	local editors
 	editors=(pico nano vim ed emacs)
 
 	if [[ ! -z $EDITOR && -x $(which $EDITOR) ]]; then
-		-blog-editor $EDITOR $1
+		-blog-editor- $EDITOR $1
 	else
 		print '$EDITOR not set or missing -- trying some defaults.'
 
-		if ! -blog-editor "$(which $editors > /dev/null | grep -m 1 /)" $1; then
+		if ! -blog-editor- "$(which $editors > /dev/null | grep -m 1 /)" $1; then
 			print 'Could not find an editor.'
 			return 1
 		fi
@@ -266,7 +293,7 @@ function -blog-edit {
 }
 
 # helper to load syntax highlighting for editor
-function -blog-editor {
+function -blog-editor- {
 	case $1 in
 		vim) vim -c "source $ZSH_BLOG/syntax/zblog.vim" $2;;
 		'') return 1;;
