@@ -221,7 +221,7 @@ function -blog-load-fragments {
 # --------
 
 function -blog-getNewPostID {
-	return $(($(ls -v $BROOT/content/posts | tail -n 1) + 1))
+	print $(($(ls -v $BROOT/posts | tail -n 1) + 1))
 }
 
 function -blog-getPostsByDate {
