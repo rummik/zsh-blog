@@ -335,11 +335,11 @@ function -blog-escape {
 
 # get the value of a header from a post
 function -blog-getPostHeader {
-	local id=${2#*-} header=$1 file=$2
+	local postid=${2#*-} header=$1 file=$2
 
-	if [[ -f $BROOT/cache/parser/$id ]]; then
+	if [[ -f $BROOT/cache/parser/$postid ]]; then
 		local -A post
-		source $BROOT/cache/parser/$id
+		source $BROOT/cache/parser/$postid
 		print $post[$header]
 		return
 	fi
