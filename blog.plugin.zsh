@@ -357,9 +357,9 @@ function -blog-getPostHeader {
 
 # parse post into something a bit more useful
 function -blog-parse-post {
-	local postid headers preview body
-	postid=${1#*-}
-	file=$BROOT/posts/$postid
+	local headers preview body
+	local postid=${1#*-}
+	local file=$BROOT/posts/$postid
 
 	if [[ -f $BROOT/cache/parser/$postid ]]; then
 		eval $(<$BROOT/cache/parser/$postid)
