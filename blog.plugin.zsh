@@ -340,7 +340,7 @@ function -blog-getPostHeader {
 	if [[ -f $BROOT/cache/parser/$postid ]]; then
 		local -A post
 		source $BROOT/cache/parser/$postid
-		print $post[$header]
+		print -- $post[$header]
 		return
 	fi
 
