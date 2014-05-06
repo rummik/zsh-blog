@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-ZSH_BLOG_VERSION=0.5
+ZSH_BLOG_VERSION=0.8
 
 autoload -U regexp-replace
 zmodload zsh/pcre
