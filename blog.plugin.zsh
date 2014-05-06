@@ -355,6 +355,30 @@ function -blog-getPostHeader {
 	print -- $data
 }
 
+# return a formatted date string
+function -blog-dateFormat {
+	date -d "$1" +"$2"
+}
+
+# return a url-safe string from a title
+# TODO: use ZSH builtins instead of tr/sed
+function -blog-getPrettyURL {
+	print -- $@ | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9.-]\+/-/g; s/^-\|-$//g'
+}
+
+# get generate a permalink for a post
+function -blog-getPermalink {
+	local file=$BROOT/posts/$1
+	local date="$(-blog-getPostHeader date $file)"
+	local title="$(-blog-getPostHeader title $file)"
+	local url=${blog[root]%/}/archives/
+
+	url+=$(-blog-dateFormat "$date" '%Y/%m/%d')/
+	url+=$(-blog-getPrettyURL $title)/
+
+	print -- $url
+}
+
 # parse post into something a bit more useful
 function -blog-parse-post {
 	local headers preview body
@@ -388,7 +412,7 @@ function -blog-parse-post {
 		'author'	"$(-blog-getPostHeader author $file)"
 		'preview'	"$preview"
 		'body'		"$body"
-		#'permalink'	"$(_zb_permalink $postid)"
+		'permalink'	"$(-blog-getPermalink $postid)"
 		'flags'		"$(-blog-getPostHeader flags $file)"
 	)
 
