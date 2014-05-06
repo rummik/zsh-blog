@@ -193,8 +193,8 @@ function blog-ls {
 
 ## clean up blog cache
 function blog-clean {
-	[[ $(ls $BROOT/content/cache/posts 2>/dev/null | wc -l) -gt 0 ]] &&
-		(rm -rf $BROOT/content/cache/*)
+	[[ $(ls $BROOT/cache/posts 2>/dev/null | wc -l) -gt 0 ]] &&
+		(rm -rf $BROOT/cache/*)
 }
 
 ## clean blog cache and rebuild blog
