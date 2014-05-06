@@ -148,6 +148,8 @@ function blog-new {
 
 		if -blog-edit $file; then
 			mv $file $BROOT/posts/$(-blog-getNewPostID)
+			print "blog: Adding post ($1)."
+			blog-update
 		else
 			rm $file
 		fi
