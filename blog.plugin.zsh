@@ -265,7 +265,7 @@ function -blog-mktemp {
 
 # templating engine
 function -blog-template {
-	print -r -- "${(e)"$(<$ZSH_BLOG/templates/themes/${blog[theme]:-default}/$1)"//\\/\\\\}"
+	print -r -- "${(e)"$(<$BROOT/templates/themes/${blog[theme]:-default}/$1)"//\\/\\\\}"
 }
 
 # edit a file
