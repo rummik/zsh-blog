@@ -205,6 +205,10 @@ function blog-regen {
 	blog-clean && blog-update
 }
 
+## generate blog content
+function blog-update {
+}
+
 
 # loaders
 # -------
