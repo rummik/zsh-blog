@@ -337,6 +337,10 @@ function -blog-escape {
 	print $string
 }
 
+# fills post with user data
+function -blog-polyfillPost {
+}
+
 # get the value of a header from a post
 function -blog-getPostHeader {
 	local postid=${2#*-} header=$1 file=$2
