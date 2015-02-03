@@ -64,23 +64,23 @@ function blog {
 
 
 	## divvy up commands
-	if ! whence "blog-$cmd" > /dev/null; then
+	if ! whence -- "-blog-$cmd" > /dev/null; then
 		print "blog: '$cmd' is not a blog command. See 'blog --help'."
 	else
-		BROOT=$(-blog-root)
+		BROOT=$(--blog-root)
 
 		if [[ $cmd != 'help' && $cmd != 'init' && $? -eq 1 ]]; then
 			print 'fatal: Not a ZSH blog (or any parent up to /)'
 			return 1
 		fi
 
-		"blog-$cmd" $@
+		"-blog-$cmd" $@
 		return $?
 	fi
 }
 
 # determine the blog root path
-function -blog-root {
+function --blog-root {
 	local root=$PWD
 
 	while [[ $root != / && ! -d "$root/.blog" ]]; do
@@ -109,10 +109,10 @@ function _blog {
 
 	case $state in
 		command)
-			compadd -- ${="$(whence -mw 'blog-*')"//(blog-|: (function|alias|command))};;
+			compadd -- ${="$(whence -mw -- '-blog-*')"//(-blog-|: (function|alias|command))};;
 
 		argument)
-			BROOT=$(-blog-root)
+			BROOT=$(--blog-root)
 			[[ $? -eq 1 ]] && return 1
 			;;
 	esac
@@ -126,7 +126,7 @@ compdef _blog blog
 # actions are meant to be called by blog (above)
 
 ## display help for various topics
-function blog-help {
+function -blog-help {
 	local page=${1:-main}
 
 	if [[ ! -f $ZSH_BLOG/help/$page ]]; then
@@ -137,19 +137,19 @@ function blog-help {
 }
 
 ## create a blog post
-alias blog-add=blog-new
-function blog-new {
+alias -- -blog-add=-blog-new
+function -blog-new {
 	local type=${1:-post}
 	local source=$ZSH_BLOG/templates/content/$type
-	local file=$(-blog-mktemp)
+	local file=$(--blog-mktemp)
 
 	if [[ -f $source ]]; then
 		cp $source $file
 
-		if -blog-edit $file; then
-			mv $file $BROOT/posts/$(-blog-getNewPostID)
+		if --blog-edit $file; then
+			mv $file $BROOT/posts/$(--blog-getNewPostID)
 			print "blog: Adding post ($1)."
-			blog-update
+			-blog-update
 		else
 			rm $file
 		fi
@@ -159,15 +159,15 @@ function blog-new {
 }
 
 ## edit a blog post
-function blog-edit {
-	if -blog-edit $BROOT/posts/$1; then
+function -blog-edit {
+	if --blog-edit $BROOT/posts/$1; then
 		print "blog: Updating post ($1)."
-		blog-update
+		-blog-update
 	fi
 }
 
 ## initialize a new blog
-function blog-init {
+function -blog-init {
 	if [[ ! -d $BROOT ]]; then
 		cp -r $ZSH_BLOG/default $BROOT
 		print Initialized emptly blog in $BROOT
@@ -177,8 +177,8 @@ function blog-init {
 }
 
 ## list blog posts
-alias blog-list=blog-ls
-function blog-ls {
+alias -- -blog-list=-blog-ls
+function -blog-ls {
 	local titleWidth=$((int((COLUMNS - 22) / 1.5)))
 	local tagWidth=$(((COLUMNS - 22) - $titleWidth))
 	local format="%8.8s | %-5.5s | %-${titleWidth}.${titleWidth}s | %-${tagWidth}.${tagWidth}s\n"
@@ -188,32 +188,32 @@ function blog-ls {
 	print -- ${(l.$COLUMNS..-.)}
 
 	for postid in $([[ -f $BROOT/posts/$1 ]] && print $1 || ls -v $BROOT/posts 2> /dev/null); do
-		-blog-parse-post $postid
+		--blog-parse-post $postid
 		printf $format $postid "$post[flags]" "$post[title]" "$post[tags]"
 	done
 }
 
 ## clean up blog cache
-function blog-clean {
+function -blog-clean {
 	[[ $(ls $BROOT/cache/*/* 2>/dev/null | wc -l) -gt 0 ]] &&
 		(rm -rf $BROOT/cache/*/*)
 }
 
 ## clean blog cache and rebuild blog
-alias blog-regenerate=blog-regen
-function blog-regen {
-	blog-clean && blog-update
+alias -- -blog-regenerate=-blog-regen
+function -blog-regen {
+	-blog-clean && -blog-update
 }
 
 ## generate blog content
-function blog-update {
+function -blog-update {
 }
 
 
 # loaders
 # -------
 
-function -blog-load-plugins {
+function --blog-load-plugins {
 	local _i _load load
 
 	for _i in 1..$#plugins; do
@@ -230,11 +230,11 @@ function -blog-load-plugins {
 	done
 }
 
-function -blog-load-fragments {
+function --blog-load-fragments {
 	local i
 	for i in 1..$#plugins; do
-		whence -- "-blog-fragment-${plugins[i]}" > /dev/null &&
-			fragments[$plugins[i]]="$("-blog-fragment-${plugins[i]}")"
+		whence -- "--blog-fragment-${plugins[i]}" > /dev/null &&
+			fragments[$plugins[i]]="$("--blog-fragment-${plugins[i]}")"
 	done
 }
 
@@ -242,14 +242,14 @@ function -blog-load-fragments {
 # database
 # --------
 
-function -blog-getNewPostID {
+function --blog-getNewPostID {
 	print $(($(ls -v $BROOT/posts | tail -n 1) + 1))
 }
 
-function -blog-getPostsByDate {
+function --blog-getPostsByDate {
 }
 
-function -blog-getPostByID {
+function --blog-getPostByID {
 	local file=$BROOT/posts/$(printf '%d' "$1")
 
 	[[ $(printf '%d' "$1") = 0 || ! -f $file ]] &&
@@ -263,24 +263,24 @@ function -blog-getPostByID {
 # -------
 
 # create a temp file
-function -blog-mktemp {
+function --blog-mktemp {
 	mktemp -u /tmp/blog-post.XXXXX
 }
 
 # templating engine
-function -blog-template {
+function --blog-template {
 	print -r -- "${(e)"$(<$BROOT/templates/themes/${blog[theme]:-default}/$1)"//\\/\\\\}"
 }
 
 # edit a file
-function -blog-edit {
+function --blog-edit {
 	local source=$1
-	local temp=$(-blog-mktemp)
+	local temp=$(--blog-mktemp)
 	local return=0
 
 	if [[ -f $source ]]; then
 		cp $source $temp
-		-blog-editor $temp
+		--blog-editor $temp
 
 		if ! diff $source $temp > /dev/null; then
 			cp $temp $source
@@ -299,16 +299,16 @@ function -blog-edit {
 }
 
 # find an editor and run it
-function -blog-editor {
+function --blog-editor {
 	local editors
 	editors=(pico nano vim vi ed emacs)
 
 	if [[ ! -z $EDITOR && -x $(which $EDITOR) ]]; then
-		-blog-editor- $EDITOR $1
+		--blog-editor- $EDITOR $1
 	else
 		print '$EDITOR not set or missing -- trying some defaults.'
 
-		if ! -blog-editor- "$(which $editors > /dev/null | grep -m 1 /)" $1; then
+		if ! --blog-editor- "$(which $editors > /dev/null | grep -m 1 /)" $1; then
 			print 'Could not find an editor.'
 			return 1
 		fi
@@ -316,7 +316,7 @@ function -blog-editor {
 }
 
 # helper to load syntax highlighting for editor
-function -blog-editor- {
+function --blog-editor- {
 	case $1 in
 		vim) vim -c "source $ZSH_BLOG/syntax/zblog.vim" $2;;
 		'') return 1;;
@@ -325,7 +325,7 @@ function -blog-editor- {
 }
 
 # escape some entities that could break links, titles, etc
-function -blog-escape {
+function --blog-escape {
 	local string="$@"
 
 	regexp-replace string '&' '&amp;'
@@ -338,11 +338,11 @@ function -blog-escape {
 }
 
 # fills post with user data
-function -blog-polyfillPost {
+function --blog-polyfillPost {
 }
 
 # get the value of a header from a post
-function -blog-getPostHeader {
+function --blog-getPostHeader {
 	local postid=${2#*-} header=$1 file=$2
 
 	if [[ -f $BROOT/cache/parser/$postid ]]; then
@@ -364,31 +364,31 @@ function -blog-getPostHeader {
 }
 
 # return a formatted date string
-function -blog-dateFormat {
+function --blog-dateFormat {
 	date -d "$1" +"$2"
 }
 
 # return a url-safe string from a title
 # TODO: use ZSH builtins instead of tr/sed
-function -blog-getPrettyURL {
+function --blog-getPrettyURL {
 	print -- $@ | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9.-]\+/-/g; s/^-\|-$//g'
 }
 
 # get generate a permalink for a post
-function -blog-getPermalink {
+function --blog-getPermalink {
 	local file=$BROOT/posts/$1
-	local date="$(-blog-getPostHeader date $file)"
-	local title="$(-blog-getPostHeader title $file)"
+	local date="$(--blog-getPostHeader date $file)"
+	local title="$(--blog-getPostHeader title $file)"
 	local url=${blog[root]%/}/archives/
 
-	url+=$(-blog-dateFormat "$date" '%Y/%m/%d')/
-	url+=$(-blog-getPrettyURL $title)/
+	url+=$(--blog-dateFormat "$date" '%Y/%m/%d')/
+	url+=$(--blog-getPrettyURL $title)/
 
 	print -- $url
 }
 
 # parse post into something a bit more useful
-function -blog-parse-post {
+function --blog-parse-post {
 	local headers preview body
 	local postid=${1#*-}
 	local file=$BROOT/posts/$postid
@@ -414,14 +414,14 @@ function -blog-parse-post {
 
 	post=(
 		'id'		$postid
-		'title'		"$(-blog-getPostHeader title $file)"
-		'tags'		"$(-blog-getPostHeader tags $file)"
-		'date'		"$(-blog-getPostHeader date $file)"
-		'author'	"$(-blog-getPostHeader author $file)"
+		'title'		"$(--blog-getPostHeader title $file)"
+		'tags'		"$(--blog-getPostHeader tags $file)"
+		'date'		"$(--blog-getPostHeader date $file)"
+		'author'	"$(--blog-getPostHeader author $file)"
 		'preview'	"$preview"
 		'body'		"$body"
-		'permalink'	"$(-blog-getPermalink $postid)"
-		'flags'		"$(-blog-getPostHeader flags $file)"
+		'permalink'	"$(--blog-getPermalink $postid)"
+		'flags'		"$(--blog-getPostHeader flags $file)"
 	)
 
 
