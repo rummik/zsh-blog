@@ -301,7 +301,7 @@ function -blog-edit {
 # find an editor and run it
 function -blog-editor {
 	local editors
-	editors=(pico nano vim ed emacs)
+	editors=(pico nano vim vi ed emacs)
 
 	if [[ ! -z $EDITOR && -x $(which $EDITOR) ]]; then
 		-blog-editor- $EDITOR $1
