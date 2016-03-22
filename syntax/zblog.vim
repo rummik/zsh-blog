@@ -15,8 +15,8 @@ syn cluster 	zblogHeaderFields		contains=zblogHeaderKey,@zblogLinks
 syn cluster 	zblogLinks			contains=zblogURL,zblogEmail
 
 
-syn region	zblogHeader	keepend		contains=@zblogHeaderFields,@zblogQuoteExps,@NoSpell start="^\v(title|tags|id|author|date):" end="^\v-{4,}" fold
-syn match	zblogHeaderKey	contained	contains=@NoSpell "^\v(title|tags|id|author|date):"
+syn region	zblogHeader	keepend		contains=@zblogHeaderFields,@zblogQuoteExps,@NoSpell start="^\v(title|tags|id|author|date|flags):" end="^\v-{4,}" fold
+syn match	zblogHeaderKey	contained	contains=@NoSpell "^\v(title|tags|id|author|date|flags):"
 
 
 syn match 	zblogURL 			contains=@NoSpell `\v<(((https?|ftp)://|(mailto|file):)[^' 	<>"]+|[a-z0-9_-]+\.[a-z0-9._-]+\.[^' 	<>"]+)[a-z0-9/]`
